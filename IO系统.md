@@ -211,3 +211,80 @@ public static void basicFileOutput(String s,String filename) throws IOException 
 
     }
 ```
+
+#### 实用类模板
+
+```java
+/**
+ * 用于简化对文件的读写操作,并可以用一个ArrayList保存文件的若干行
+ */
+public class TextFile extends ArrayList<String> {
+    public TextFile(String filename, String splitter) {
+        super(Arrays.asList(read(filename).split(splitter)));
+
+        if (get(0).equals("")) {
+            this.remove(0);
+        }
+    }
+
+    public TextFile(String filename) {
+        this(filename, "\n");
+    }
+
+    public static String read(String filename) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(new File(filename).getAbsoluteFile()));
+            try {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    sb.append(s);
+                    sb.append("\n");
+                }
+            }finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
+        return sb.toString();
+    }
+
+    public static void write(String filename, String text) {
+        try {
+            PrintWriter out = new PrintWriter(new File(filename).getAbsoluteFile());
+            try {
+                out.print(text);
+            }finally {
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    public void write(String filename) {
+        try {
+            PrintWriter out = new PrintWriter(new File(filename).getAbsoluteFile());
+            try {
+                for (String item : this) {
+                    out.println(item);
+                }
+            } finally {
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    public static void main(String[] args) {
+
+    }
+
+}
+```
